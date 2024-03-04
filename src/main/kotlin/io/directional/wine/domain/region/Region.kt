@@ -6,9 +6,17 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "region")
-data class Region(
-        val name_korean: String,
-        val name_english: String,
-        val parent_name_korean: String?,
-        val parent_name_english: String?
-) : BaseEntity()
+class Region(
+        var name_korean: String,
+        var name_english: String,
+        var parent_name_korean: String?,
+        var parent_name_english: String?
+
+) : BaseEntity(){
+   fun update(dto: Region){
+       this.name_korean = dto.name_korean
+       this.name_english = dto.name_english
+       this.parent_name_korean = dto.parent_name_korean
+       this.parent_name_english = dto.name_english
+   }
+}
