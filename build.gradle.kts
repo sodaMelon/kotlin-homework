@@ -37,8 +37,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // database
-    testRuntimeOnly("com.h2database:h2")
-    runtimeOnly ("com.mysql:mysql-connector-j")
+    runtimeOnly("com.h2database:h2")
 
     // querydsl
     implementation("com.querydsl:querydsl-core:5.0.0")

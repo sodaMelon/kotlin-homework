@@ -1,13 +1,9 @@
+server:
+  forward-headers-strategy: framework
 spring:
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: update
+    open-in-view: true
     properties:
       hibernate:
-        show_sql: true
-  datasource:
-    url: jdbc:mysql://us-cluster-east-01.k8s.cleardb.net:3306/heroku_c9e212639b7b940
-    username: bbea14e4db5300
-    password: ddfae1ad
-    driver-class-name: com.mysql.cj.jdbc.Driver
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
