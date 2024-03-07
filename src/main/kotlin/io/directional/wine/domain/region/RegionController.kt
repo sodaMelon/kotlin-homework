@@ -37,9 +37,21 @@ class RegionController(private val regionService: RegionService) {
     /**
      * search api 사용 시 , filter1 선택용
      * */
-    @GetMapping("/find-all-region-names")
+    @GetMapping("/find-all-region")
     fun findAllRegionNames(): ResponseEntity<Any> {
         return ResponseEntity.ok(regionService.findAllRegionNames())
+    }
+    /***
+     * 지역조회1: 다수 조회
+     */
+    //todo
+    
+    /**
+     * 지역조회2: 단일 조회 (by regionId)
+     */
+    @GetMapping("/search-one/{regionId}")
+    fun searchRegions(@PathVariable regionId : Long) : ResponseEntity<Any>{
+        return ResponseEntity.ok(regionService.findOneRegionInfo(regionId))
     }
 
 }

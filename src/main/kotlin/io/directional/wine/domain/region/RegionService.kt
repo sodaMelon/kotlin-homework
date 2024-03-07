@@ -1,5 +1,6 @@
 package io.directional.wine.domain.region
 
+import io.directional.wine.domain.region.dto.RegionSearchOneDto
 import io.directional.wine.domain.region.repository.RegionRepository
 import org.springframework.stereotype.Service
 
@@ -34,7 +35,11 @@ class RegionService(private val regionRepository: RegionRepository) {
     }
 
 
-    fun findAllRegionNames(): List<String>  {
-        return regionRepository.findAllRegionNamesDistinct()
+    fun findAllRegionNames(): List<Region>  {
+        return regionRepository.findAll() //todo 나중에 엔티티의 del값으로 데이터 정합성 여부 체크하게되면, del=false인것만  추출
+    }
+
+    fun findOneRegionInfo(regionId: Long): List<RegionSearchOneDto> {
+        return regionRepository.findOneRegionInfo(regionId)
     }
 }
