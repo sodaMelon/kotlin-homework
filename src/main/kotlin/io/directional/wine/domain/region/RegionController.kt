@@ -33,4 +33,13 @@ class RegionController(private val regionService: RegionService) {
     fun deleteRegion(@RequestParam id: Long): ResponseEntity<Any> = regionService.delete(id).run {
         ResponseEntity.noContent().build()
     }
+
+    /**
+     * search api 사용 시 , filter1 선택용
+     * */
+    @GetMapping("/find-all-region-names")
+    fun findAllRegionNames(): ResponseEntity<Any> {
+        return ResponseEntity.ok(regionService.findAllRegionNames())
+    }
+
 }

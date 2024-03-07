@@ -1,5 +1,6 @@
 package io.directional.wine.domain.region
 
+import io.directional.wine.domain.region.repository.RegionRepository
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,4 +33,8 @@ class RegionService(private val regionRepository: RegionRepository) {
         }
     }
 
+
+    fun findAllRegionNames(): List<String>  {
+        return regionRepository.findAllRegionNamesDistinct()
+    }
 }
