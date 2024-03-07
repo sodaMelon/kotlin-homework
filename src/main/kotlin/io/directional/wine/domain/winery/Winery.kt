@@ -9,6 +9,5 @@ import jakarta.persistence.Table
 data class Winery(
         val name_korean: String,
         val name_english: String,
-        val region_name_korean: String,
-        val region_name_english: String
+        var regionId : Long
 ) : BaseEntity();

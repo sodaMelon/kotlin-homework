@@ -7,9 +7,7 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "grape_share")
 data class GrapeShare(
-        val name_korean: String,
-        val name_english: String,
-        val share: Double,
-        val region_name_korean: String,
-        val region_name_english: String
+        var share: Double,
+        var regionId : Long,
+        var grapeId : Long
 ) : BaseEntity()
