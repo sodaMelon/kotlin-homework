@@ -1,9 +1,14 @@
 package io.directional.wine.domain.region.repository
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
+import io.directional.wine.domain.grape.Grape
+import io.directional.wine.domain.grape.QGrape
 import io.directional.wine.domain.grape.QGrape.grape
 import io.directional.wine.domain.grapeshare.QGrapeShare.grapeShare
 import io.directional.wine.domain.region.QRegion.region
+import io.directional.wine.domain.region.dto.GrapeSimpleDto
+import io.directional.wine.domain.region.dto.QGrapeSimpleDto
 import io.directional.wine.domain.region.dto.QRegionSearchOneDto
 import io.directional.wine.domain.region.dto.RegionSearchOneDto
 import io.directional.wine.domain.wine.QWine.wine
@@ -34,5 +39,12 @@ class RegionRepositoryImpl(private val queryFactory: JPAQueryFactory)  : RegionR
                 .where(region.id.eq(regionId)).fetch();
     }
 
+    override fun findGrapesBy(regionIds: List<Long>): List<GrapeSimpleDto> {
+        return queryFactory
+                .select(QGrapeSimpleDto(grape.id, grape.nameKorean, grape.nameEnglish, grapeShare.regionId))
+                .from(grapeShare)
+                .innerJoin(grape).on(grapeShare.grapeId.eq(grape.id))
+                .where(grapeShare.regionId.`in`(regionIds)).fetch()
+    }
 
 }

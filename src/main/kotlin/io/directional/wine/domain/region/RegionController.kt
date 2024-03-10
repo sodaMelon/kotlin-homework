@@ -1,5 +1,6 @@
 package io.directional.wine.domain.region
 
+import io.directional.wine.domain.region.dto.RegionSearchRequestDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -35,22 +36,30 @@ class RegionController(private val regionService: RegionService) {
     }
 
     /**
-     * search api 사용 시 , filter1 선택용
+     * search api 사용 시 , parentRegion 확인용
      * */
     @GetMapping("/find-all-region")
     fun findAllRegionNames(): ResponseEntity<Any> {
         return ResponseEntity.ok(regionService.findAllRegionNames())
     }
+
     /***
      * 지역조회1: 다수 조회
      */
-    //todo
-    
+    @PostMapping("/search-many")
+    fun searchRegions(@RequestBody request: RegionSearchRequestDto) : ResponseEntity<Any>{
+        if (request.isKeyKorean()) {
+            return ResponseEntity.ok(regionService.findByRequest(request))
+        }
+        return ResponseEntity.badRequest().build()
+    }
+
+
     /**
      * 지역조회2: 단일 조회 (by regionId)
      */
     @GetMapping("/search-one/{regionId}")
-    fun searchRegions(@PathVariable regionId : Long) : ResponseEntity<Any>{
+    fun searchRegionById(@PathVariable regionId : Long) : ResponseEntity<Any>{
         return ResponseEntity.ok(regionService.findOneRegionInfo(regionId))
     }
 
