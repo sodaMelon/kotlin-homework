@@ -7,10 +7,10 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "grape")
 data class Grape(
-        val name_korean: String,
-        val name_english: String,
-        val acidity: Int,
-        val body: Int,
-        val sweetness: Int,
-        val tannin: Int
+        var nameKorean: String,
+        var nameEnglish: String,
+        var acidity: Int,
+        var body: Int,
+        var sweetness: Int,
+        var tannin: Int
 ) : BaseEntity()

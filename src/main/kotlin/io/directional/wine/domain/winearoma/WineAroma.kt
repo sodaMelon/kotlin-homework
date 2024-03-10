@@ -7,7 +7,6 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "wine_aroma")
 data class WineAroma(
-        val name_korean: String,
-        val name_english: String,
-        val aroma: String
+        var wineId: Long,
+        var aroma: String
 ): BaseEntity()
