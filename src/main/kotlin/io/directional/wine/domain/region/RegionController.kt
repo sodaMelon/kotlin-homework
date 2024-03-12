@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/region")
+@RequestMapping("/regions")
 class RegionController(private val regionService: RegionService) {
 
     @GetMapping
     fun readOneRegion(@RequestParam id: Long): ResponseEntity<Any> =
             regionService.readOne(id)?.let { result ->
                 ResponseEntity.ok(result)
-            } ?: ResponseEntity.noContent().build()
+            } ?: ResponseEntity.notFound().build()
     
     @PostMapping
     fun createNewRegion(@RequestBody region: Region): ResponseEntity<Any> = if (region.id != null) {
@@ -38,7 +38,7 @@ class RegionController(private val regionService: RegionService) {
     /**
      * search api 사용 시 , parentRegion 확인용
      * */
-    @GetMapping("/find-all-region")
+    @GetMapping("/names")
     fun findAllRegionNames(): ResponseEntity<Any> {
         return ResponseEntity.ok(regionService.findAllRegionNames())
     }
@@ -46,7 +46,7 @@ class RegionController(private val regionService: RegionService) {
     /***
      * 지역조회1: 다수 조회
      */
-    @PostMapping("/search-many")
+    @PostMapping("/search")
     fun searchRegions(@RequestBody request: RegionSearchRequestDto) : ResponseEntity<Any>{
         if (request.isKeyKorean()) {
             return ResponseEntity.ok(regionService.findByRequest(request))
@@ -58,7 +58,7 @@ class RegionController(private val regionService: RegionService) {
     /**
      * 지역조회2: 단일 조회 (by regionId)
      */
-    @GetMapping("/search-one/{regionId}")
+    @GetMapping("/{regionId}")
     fun searchRegionById(@PathVariable regionId : Long) : ResponseEntity<Any>{
         return ResponseEntity.ok(regionService.findOneRegionInfo(regionId))
     }
