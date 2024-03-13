@@ -32,8 +32,8 @@ class RegionRepositoryImpl(private val queryFactory: JPAQueryFactory)  : RegionR
                         wine.id, wine.nameKorean, wine.nameEnglish,
                         winery.id, winery.nameKorean, winery.nameEnglish))
                 .from(region)
-                .leftJoin(grapeShare).on(region.id.eq(grapeShare.regionId))
-                .leftJoin(grape).on(grapeShare.grapeId.eq(grape.id))
+                .leftJoin(grapeShare).on(region.id.eq(grapeShare.region.id))
+                .leftJoin(grape).on(grapeShare.grape.id.eq(grape.id))
                 .leftJoin(wine).on(region.id.eq(wine.regionId))
                 .leftJoin(winery).on(wine.wineryId.eq(winery.id))
                 .where(region.id.eq(regionId)).fetch();
@@ -41,10 +41,10 @@ class RegionRepositoryImpl(private val queryFactory: JPAQueryFactory)  : RegionR
 
     override fun findGrapesBy(regionIds: List<Long>): List<GrapeSimpleDto> {
         return queryFactory
-                .select(QGrapeSimpleDto(grape.id, grape.nameKorean, grape.nameEnglish, grapeShare.regionId))
+                .select(QGrapeSimpleDto(grape.id, grape.nameKorean, grape.nameEnglish, grapeShare.region.id))
                 .from(grapeShare)
-                .innerJoin(grape).on(grapeShare.grapeId.eq(grape.id))
-                .where(grapeShare.regionId.`in`(regionIds)).fetch()
+                .innerJoin(grape).on(grapeShare.grape.id.eq(grape.id))
+                .where(grapeShare.region.id.`in`(regionIds)).fetch()
     }
 
 }
