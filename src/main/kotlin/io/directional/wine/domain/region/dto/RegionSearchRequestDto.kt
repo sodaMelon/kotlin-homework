@@ -12,6 +12,6 @@ data class RegionSearchRequestDto(
      * 현재는 한글 검색만 지원하므로 임시로 이 function을 사용한다.
      */
     fun isKeyKorean() : Boolean {
-        return StringUtil().isKoreanOnly(this.key)
+        return StringUtil.isKoreanOnly(this.key)
     }
 }
