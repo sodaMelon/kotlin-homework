@@ -3,12 +3,12 @@ package io.directional.wine.domain.region.repository
 import com.querydsl.jpa.impl.JPAQueryFactory
 import io.directional.wine.domain.grape.QGrape.grape
 import io.directional.wine.domain.grapeshare.QGrapeShare.grapeShare
+import io.directional.wine.domain.region.QRegion
+import io.directional.wine.domain.region.Region
 import io.directional.wine.domain.region.dto.GrapeSimpleDto
 import io.directional.wine.domain.region.dto.QGrapeSimpleDto
 import io.directional.wine.domain.region.dto.QWineryWithWinesDto
 import io.directional.wine.domain.region.dto.WineryWithWinesDto
-import io.directional.wine.domain.regionv2.QRegionV2
-import io.directional.wine.domain.regionv2.RegionV2
 import io.directional.wine.domain.wine.QWine.wine
 import io.directional.wine.domain.winery.QWinery.winery
 
@@ -23,9 +23,9 @@ class RegionRepositoryImpl(private val queryFactory: JPAQueryFactory)  : RegionR
     }
 
 
-    override fun findRegions(englishName: String?, koreanName: String?, parentId: Long?): MutableList<RegionV2> {
-        val regionV2 = QRegionV2.regionV2
-        val parent = QRegionV2.regionV2.parent
+    override fun findRegions(englishName: String?, koreanName: String?, parentId: Long?): MutableList<Region> {
+        val regionV2 = QRegion.region
+        val parent = QRegion.region.parent
 
         val query = queryFactory
                 .select(regionV2, parent)
@@ -44,17 +44,17 @@ class RegionRepositoryImpl(private val queryFactory: JPAQueryFactory)  : RegionR
 
         val results = query.fetch()
 
-        // 결과를 RegionV2 엔티티로 매핑하여 반환
+        // 결과를 Region 엔티티로 매핑하여 반환
         return results.map { tuple ->
             val region = tuple.get(regionV2)
             val parentRegion = tuple.get(parent)
             region!!.parent = parentRegion // 부모 엔티티 설정
-            region // 매핑된 RegionV2 엔티티 반환
+            region // 매핑된 Region 엔티티 반환
         }.toMutableList()
     }
-    override fun findRegionById(regionId: Long):  RegionV2? {
-        val regionV2 = QRegionV2.regionV2
-        val parent = QRegionV2.regionV2.parent
+    override fun findRegionById(regionId: Long):  Region? {
+        val regionV2 = QRegion.region
+        val parent = QRegion.region.parent
 
         val query = queryFactory
                 .select(regionV2, parent)
@@ -66,12 +66,12 @@ class RegionRepositoryImpl(private val queryFactory: JPAQueryFactory)  : RegionR
         }
         val results = query.fetchOne()
 
-        // 결과를 RegionV2 엔티티로 매핑하여 반환
+        // 결과를 Region 엔티티로 매핑하여 반환
         return results?.let { tuple ->
             val region = tuple.get(regionV2)
             val parentRegion = tuple.get(parent)
             region?.parent = parentRegion // 부모 엔티티 설정
-            region // 매핑된 RegionV2 엔티티 반환
+            region // 매핑된 Region 엔티티 반환
         }
     }
 

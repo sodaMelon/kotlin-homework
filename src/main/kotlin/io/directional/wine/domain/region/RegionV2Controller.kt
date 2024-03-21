@@ -1,8 +1,8 @@
-package io.directional.wine.domain.regionv2
+package io.directional.wine.domain.region
 
 import io.directional.wine.domain.region.dto.CreateRegionDto
 import io.directional.wine.domain.region.dto.UpdateRegionDto
-import io.directional.wine.domain.regionv2.dto.RegionV2SearchRequestDto
+import io.directional.wine.domain.region.dto.RegionSearchRequestDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.net.URI
@@ -10,7 +10,7 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/regions-v2")
-class RegionV2Controller(private val regionService: RegionV2Service) {
+class RegionV2Controller(private val regionService: RegionService) {
 
     @GetMapping
     fun readOneRegion(@RequestParam id: Long): ResponseEntity<Any> {
@@ -48,7 +48,7 @@ class RegionV2Controller(private val regionService: RegionV2Service) {
      * 지역조회1: 다수 조회 (v2에서는 한글/영문 모두 검색가능)
      */
     @PostMapping("/search")
-    fun searchRegions(@RequestBody request: RegionV2SearchRequestDto) : ResponseEntity<Any>{
+    fun searchRegions(@RequestBody request: RegionSearchRequestDto) : ResponseEntity<Any>{
             return ResponseEntity.ok(regionService.findByRequest(request))
     }
 

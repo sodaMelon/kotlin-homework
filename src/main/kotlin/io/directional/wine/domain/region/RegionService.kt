@@ -1,13 +1,9 @@
-package io.directional.wine.domain.regionv2
+package io.directional.wine.domain.region
 
 import io.directional.wine.common.StringUtil
 import io.directional.wine.common.exception.NotFoundException
 import io.directional.wine.domain.region.dto.*
 import io.directional.wine.domain.region.repository.RegionRepository
-import io.directional.wine.domain.regionv2.dto.RegionV2SearchOneDto
-import io.directional.wine.domain.regionv2.dto.RegionV2SearchRequestDto
-import io.directional.wine.domain.regionv2.dto.RegionV2SearchResponseDto
-import io.directional.wine.domain.regionv2.repository.RegionV2Repository
 import io.directional.wine.domain.wine.dto.SimpleWineDto
 import io.directional.wine.domain.winery.Winery
 import io.directional.wine.domain.winery.WineryRepository
@@ -16,18 +12,17 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
-class RegionV2Service(private val regionV2Repository: RegionV2Repository,
-                      private val wineryRepository: WineryRepository,
-                      private val regionRepository: RegionRepository) {
+class RegionService(private val wineryRepository: WineryRepository,
+                    private val regionRepository: RegionRepository) {
 
-    fun readOne(id: Long): RegionV2 {
-        return regionV2Repository.findById(id)
+    fun readOne(id: Long): Region {
+        return regionRepository.findById(id)
                 .orElseThrow { NotFoundException() }
     }
 
-    fun create(dto: CreateRegionDto): RegionV2 {
+    fun create(dto: CreateRegionDto): Region {
         val parentRegionV2 = dto.parentId?.let { readOne(it) }
-        val region = regionV2Repository.save(RegionV2(dto, parentRegionV2))
+        val region = regionRepository.save(Region(dto, parentRegionV2))
         return region
     }
 
@@ -47,17 +42,17 @@ class RegionV2Service(private val regionV2Repository: RegionV2Repository,
 
     fun delete(id: Long) {
         val region = readOne(id)
-        regionV2Repository.delete(region)
+        regionRepository.delete(region)
     }
 
-    fun findAllRegionWithNoParent(): List<RegionV2> {
-        return regionV2Repository.findAllByParentIsNull()
+    fun findAllRegionWithNoParent(): List<Region> {
+        return regionRepository.findAllByParentIsNull()
     }
 
 
-    fun findByRequest(request: RegionV2SearchRequestDto): List<RegionV2SearchResponseDto> {
-        val response: MutableList<RegionV2SearchResponseDto> = ArrayList()
-        val regionResult: List<RegionV2> = findRegions(request) //1. 지역을 찾아온다.
+    fun findByRequest(request: RegionSearchRequestDto): List<RegionSearchResponseDto> {
+        val response: MutableList<RegionSearchResponseDto> = ArrayList()
+        val regionResult: List<Region> = findRegions(request) //1. 지역을 찾아온다.
         if (regionResult.isNotEmpty()) { //2. 지역값으로 추가정보를 찾아온다.
             val regionIds : MutableList<Long> = ArrayList()
             regionResult.forEach { region -> region.id?.let { regionIds.add(it) }   }
@@ -68,13 +63,13 @@ class RegionV2Service(private val regionV2Repository: RegionV2Repository,
             val groupedWinery: Map<Long, List<Winery>> = wineryRepository.findByRegionIdIn(regionIds)
                     .groupBy { it.regionId }
             regionResult.forEach { region ->
-                response.add(RegionV2SearchResponseDto(region, groupedGrapes.get(region.id), groupedWinery.get(region.id)))
+                response.add(RegionSearchResponseDto(region, groupedGrapes.get(region.id), groupedWinery.get(region.id)))
             }
         }
         return sortRegionSearchResponseDto(response, request.sort) //3. 찾아온 정보를 정렬한다.
     }
 
-    private fun sortRegionSearchResponseDto(list: List<RegionV2SearchResponseDto>, sort: RegionNameSort): List<RegionV2SearchResponseDto> {
+    private fun sortRegionSearchResponseDto(list: List<RegionSearchResponseDto>, sort: RegionNameSort): List<RegionSearchResponseDto> {
         return when (sort) {
             RegionNameSort.ENG_ASC -> list.sortedWith(compareBy { it.region.nameEnglish })
             RegionNameSort.ENG_DESC -> list.sortedWith(compareByDescending { it.region.nameEnglish })
@@ -84,17 +79,17 @@ class RegionV2Service(private val regionV2Repository: RegionV2Repository,
         }
     }
 
-    private fun findRegions(request: RegionV2SearchRequestDto): List<RegionV2> {
+    private fun findRegions(request: RegionSearchRequestDto): List<Region> {
         val koreanKey: String? = if (StringUtil.isKoreanOnly(request.key)) request.key else null
         val englishKey: String? = if (StringUtil.isKoreanOnly(request.key)) null else request.key
         return regionRepository.findRegions(englishKey, koreanKey, request.parentRegionId)
     }
 
-    fun findOneRegionInfo(regionId: Long): RegionV2SearchOneDto {
-        val region: RegionV2 = regionRepository.findRegionById(regionId) ?: throw NotFoundException()
+    fun findOneRegionInfo(regionId: Long): RegionSearchOneDto {
+        val region: Region = regionRepository.findRegionById(regionId) ?: throw NotFoundException()
         val grapes: List<GrapeSimpleDto> = regionRepository.findGrapesBy(listOf(regionId))
         val wineInfosMap : Map<Long, List<WineryWithWinesDto>> = regionRepository.findWineryAndWineByRegionId(regionId).groupBy { it.wineryId }
-        return RegionV2SearchOneDto(region, grapes, convertWineryWithWine(wineInfosMap))
+        return RegionSearchOneDto(region, grapes, convertWineryWithWine(wineInfosMap))
         }
 
     private fun convertWineryWithWine(mapGroupedByWineryId: Map<Long, List<WineryWithWinesDto>>): List<SimpleWineryDto> {

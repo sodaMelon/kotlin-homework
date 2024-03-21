@@ -2,7 +2,7 @@ package io.directional.wine.domain.grapeshare
 
 import io.directional.wine.domain.BaseEntity
 import io.directional.wine.domain.grape.Grape
-import io.directional.wine.domain.regionv2.RegionV2
+import io.directional.wine.domain.region.Region
 import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
@@ -14,7 +14,7 @@ data class GrapeShare(
         var share: Double,
         @ManyToOne
         @JoinColumn(name="region_id")
-        var region : RegionV2,
+        var region : Region,
         @ManyToOne
         @JoinColumn(name="grape_id")
         var grape : Grape

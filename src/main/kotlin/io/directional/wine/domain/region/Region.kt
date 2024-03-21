@@ -1,4 +1,4 @@
-package io.directional.wine.domain.regionv2
+package io.directional.wine.domain.region
 
 
 import io.directional.wine.domain.region.dto.CreateRegionDto
@@ -6,8 +6,8 @@ import io.directional.wine.domain.region.dto.UpdateRegionDto
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "region_v2")
-class RegionV2 ( //ver2
+@Table(name = "region")
+class Region ( //ver2
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "id")
@@ -17,13 +17,13 @@ class RegionV2 ( //ver2
 
         @ManyToOne(fetch = FetchType.LAZY) //단방향 자가 참조
         @JoinColumn(name = "parent_id")
-        var parent: RegionV2?,
+        var parent: Region?,
 ){
 
-        constructor(createDto: CreateRegionDto, parentRegionV2: RegionV2? ) : this(
+        constructor(createDto: CreateRegionDto, parentRegion: Region? ) : this(
                 nameKorean = createDto.nameKorean,
                 nameEnglish = createDto.nameEnglish,
-                parent = parentRegionV2
+                parent = parentRegion
         )
 
         fun isParentNull() : Boolean{
@@ -35,7 +35,7 @@ class RegionV2 ( //ver2
                 this.nameEnglish = dto.nameEnglish
         }
 
-        fun updateParent(newParentRegionV2 : RegionV2?){
-                this.parent = newParentRegionV2
+        fun updateParent(newParentRegion : Region?){
+                this.parent = newParentRegion
         }
 }
