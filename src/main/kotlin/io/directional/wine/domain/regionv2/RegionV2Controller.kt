@@ -52,5 +52,13 @@ class RegionV2Controller(private val regionService: RegionV2Service) {
             return ResponseEntity.ok(regionService.findByRequest(request))
     }
 
+    /**
+     * 지역조회2: 단일 조회 (by regionId)
+     */
+    @GetMapping("/{regionId}")
+    fun searchRegionById(@PathVariable regionId : Long) : ResponseEntity<Any>{
+        return ResponseEntity.ok(regionService.findOneRegionInfo(regionId))
+    }
+
 
 }

@@ -2,16 +2,16 @@ package io.directional.wine.domain.regionv2
 
 import io.directional.wine.common.StringUtil
 import io.directional.wine.common.exception.NotFoundException
-import io.directional.wine.domain.region.dto.CreateRegionDto
-import io.directional.wine.domain.region.dto.GrapeSimpleDto
-import io.directional.wine.domain.region.dto.RegionNameSort
-import io.directional.wine.domain.region.dto.UpdateRegionDto
+import io.directional.wine.domain.region.dto.*
 import io.directional.wine.domain.region.repository.RegionRepository
+import io.directional.wine.domain.regionv2.dto.RegionV2SearchOneDto
 import io.directional.wine.domain.regionv2.dto.RegionV2SearchRequestDto
 import io.directional.wine.domain.regionv2.dto.RegionV2SearchResponseDto
 import io.directional.wine.domain.regionv2.repository.RegionV2Repository
+import io.directional.wine.domain.wine.dto.SimpleWineDto
 import io.directional.wine.domain.winery.Winery
 import io.directional.wine.domain.winery.WineryRepository
+import io.directional.wine.domain.winery.dto.SimpleWineryDto
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -88,6 +88,35 @@ class RegionV2Service(private val regionV2Repository: RegionV2Repository,
         val koreanKey: String? = if (StringUtil.isKoreanOnly(request.key)) request.key else null
         val englishKey: String? = if (StringUtil.isKoreanOnly(request.key)) null else request.key
         return regionRepository.findRegions(englishKey, koreanKey, request.parentRegionId)
+    }
+
+    fun findOneRegionInfo(regionId: Long): RegionV2SearchOneDto {
+        val region: RegionV2 = regionRepository.findRegionById(regionId) ?: throw NotFoundException()
+        val grapes: List<GrapeSimpleDto> = regionRepository.findGrapesBy(listOf(regionId))
+        val wineInfosMap : Map<Long, List<WineryWithWinesDto>> = regionRepository.findWineryAndWineByRegionId(regionId).groupBy { it.wineryId }
+        return RegionV2SearchOneDto(region, grapes, convertWineryWithWine(wineInfosMap))
+        }
+
+    private fun convertWineryWithWine(mapGroupedByWineryId: Map<Long, List<WineryWithWinesDto>>): List<SimpleWineryDto> {
+        return mapGroupedByWineryId.map { (wineryId, wineryList) ->
+            val firstElement = wineryList.first()
+            val wines = wineryList.map { wine ->
+                SimpleWineDto(
+                        wineId = wine.wineId,
+                        wineNameKorean = wine.wineNameKorean,
+                        wineNameEnglish = wine.wineNameEnglish,
+                        wineWineryId = wine.wineWineryId,
+                        wineRegionId = wine.wineRegionId
+                )
+            }
+            SimpleWineryDto(
+                    wineryId = firstElement.wineryId,
+                    wineryNameKorean = firstElement.wineryNameKorean,
+                    wineryNameEnglish = firstElement.wineryNameEnglish,
+                    wineryRegionId = firstElement.wineryRegionId,
+                    wines = wines
+            )
+        }.sortedBy { it.wineryId } // wineryId를 기준으로 ASC 정렬
     }
 }
 
