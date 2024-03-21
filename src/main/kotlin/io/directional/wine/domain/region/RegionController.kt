@@ -9,8 +9,8 @@ import java.net.URI
 
 
 @RestController
-@RequestMapping("/regions-v2") //todo (클라이언트에서 아래 API 사용하지 않는 것을 확인 후 V2컨트롤러를 제거한다.)
-class RegionV2Controller(private val regionService: RegionService) {
+@RequestMapping("/regions") //todo (클라이언트에서 아래 API로 모두 교체된 것을 확인 후 V2컨트롤러를 제거한다.)
+class RegionController(private val regionService: RegionService) {
 
     @GetMapping
     fun readOneRegion(@RequestParam id: Long): ResponseEntity<Any> {
@@ -20,7 +20,7 @@ class RegionV2Controller(private val regionService: RegionService) {
     @PostMapping
     fun createNewRegion(@RequestBody dto: CreateRegionDto): ResponseEntity<Any> {
         val result = regionService.create(dto)
-        return ResponseEntity.created(URI.create("/regions-v2/${result.id}")).build()
+        return ResponseEntity.created(URI.create("/regions/${result.id}")).build()
         //fixme 분산DB 환경이라면 상황에 따라서 200 반환으로 변경
     }
 
