@@ -9,7 +9,7 @@ import java.net.URI
 
 
 @RestController
-@RequestMapping("/regions") //todo (클라이언트에서 아래 API로 모두 교체된 것을 확인 후 V2컨트롤러를 제거한다.)
+@RequestMapping("/regions")
 class RegionController(private val regionService: RegionService) {
 
     @GetMapping
